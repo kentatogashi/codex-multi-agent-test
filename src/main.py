@@ -51,6 +51,7 @@ def read_int_env(name: str, default: int) -> int:
 REQUEST_TIMEOUT_SECONDS = read_float_env("WEATHER_REQUEST_TIMEOUT_SECONDS", 10.0)
 CACHE_TTL_SECONDS = read_int_env("WEATHER_CACHE_TTL_SECONDS", 900)
 PORT = read_int_env("PORT", 8000)
+COPYRIGHT_NOTICE = f"Copyright {datetime.now().year} Kanagawa Weekly Weather Viewer"
 
 WEATHER_CODE_LABELS = {
     "100": "Sunny",
@@ -385,6 +386,7 @@ def render_page(snapshot: dict[str, Any]) -> str:
     office = escape_text(snapshot["publishing_office"])
     published_at = escape_text(snapshot["published_at"])
     overview_text = "<br>".join(escape_text(snapshot["overview_text"]).splitlines()) or "No overview available."
+    copyright_notice = escape_text(COPYRIGHT_NOTICE)
 
     rows_html = "".join(
         """
@@ -552,6 +554,12 @@ def render_page(snapshot: dict[str, Any]) -> str:
         display: grid;
         gap: 8px;
       }}
+      .footer {{
+        margin-top: 18px;
+        text-align: center;
+        font-size: 0.85rem;
+        color: rgba(31, 42, 48, 0.72);
+      }}
       @media (max-width: 860px) {{
         .grid {{
           grid-template-columns: 1fr;
@@ -636,6 +644,7 @@ def render_page(snapshot: dict[str, Any]) -> str:
           </section>
         </div>
       </section>
+      <footer class="footer">{copyright_notice}</footer>
     </main>
   </body>
 </html>
@@ -763,6 +772,7 @@ class WeatherHandler(BaseHTTPRequestHandler):
 
 
 def render_error_page() -> str:
+    copyright_notice = escape_text(COPYRIGHT_NOTICE)
     return f"""<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -786,6 +796,11 @@ def render_error_page() -> str:
         background: rgba(255, 252, 245, 0.88);
         box-shadow: 0 22px 50px rgba(31, 42, 48, 0.14);
       }}
+      .legal {{
+        margin-top: 18px;
+        font-size: 0.9rem;
+        color: rgba(31, 42, 48, 0.7);
+      }}
     </style>
   </head>
   <body>
@@ -793,6 +808,7 @@ def render_error_page() -> str:
       <h1>Weather data unavailable</h1>
       <p>Weather data could not be loaded from the upstream provider.</p>
       <p>Try again in a few minutes.</p>
+      <p class="legal">{copyright_notice}</p>
     </article>
   </body>
 </html>
@@ -800,15 +816,42 @@ def render_error_page() -> str:
 
 
 def render_not_found_page() -> str:
-    return """<!DOCTYPE html>
+    copyright_notice = escape_text(COPYRIGHT_NOTICE)
+    return f"""<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Not found</title>
+    <style>
+      body {{
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(160deg, #f8efe7 0%, #e2edf0 100%);
+        color: #1f2a30;
+        font-family: "Iowan Old Style", "Palatino Linotype", "Yu Mincho", serif;
+      }}
+      article {{
+        width: min(640px, calc(100vw - 32px));
+        padding: 28px;
+        border-radius: 24px;
+        background: rgba(255, 252, 245, 0.88);
+        box-shadow: 0 22px 50px rgba(31, 42, 48, 0.14);
+      }}
+      .legal {{
+        margin-top: 18px;
+        font-size: 0.9rem;
+        color: rgba(31, 42, 48, 0.7);
+      }}
+    </style>
   </head>
   <body>
-    <p>Not found.</p>
+    <article>
+      <p>Not found.</p>
+      <p class="legal">{copyright_notice}</p>
+    </article>
   </body>
 </html>
 """
