@@ -1,3 +1,4 @@
+from datetime import datetime
 import unittest
 
 from src.main import ForecastError, build_view_model, render_page
@@ -135,6 +136,10 @@ class BuildViewModelTests(unittest.TestCase):
 
         self.assertNotIn("<script>", html)
         self.assertIn("&lt;script&gt;alert('xss')&lt;/script&gt;", html)
+        self.assertIn(
+            f"Copyright {datetime.now().year} Kanagawa Weekly Weather Viewer",
+            html,
+        )
 
     def test_build_view_model_rejects_invalid_payload(self) -> None:
         with self.assertRaises(ForecastError):
