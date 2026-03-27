@@ -1,0 +1,2 @@
+openai>=1.0.0
+# Add other dependencies for multi-agent testing as needed
