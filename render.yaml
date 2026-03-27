@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: kanagawa-weekly-weather
+    runtime: python
+    plan: free
+    branch: master
+    autoDeploy: false
+    buildCommand: pip install -r requirements.txt
+    startCommand: python src/main.py
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.2
+      - key: WEATHER_CACHE_TTL_SECONDS
+        value: 900
+      - key: WEATHER_REQUEST_TIMEOUT_SECONDS
+        value: 10
